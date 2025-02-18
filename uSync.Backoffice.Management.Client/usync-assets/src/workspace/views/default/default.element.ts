@@ -14,7 +14,7 @@ import {
 	SyncActionGroup,
 	SyncHandlerSummary,
 	SyncLegacyCheckResponse,
-	uSyncActionView,
+	USyncActionView,
 } from '@jumoo/uSync';
 
 @customElement('usync-default-view')
@@ -50,7 +50,7 @@ export class uSyncDefaultViewElement extends UmbLitElement {
 	_group?: SyncActionGroup;
 
 	@state()
-	_results: Array<uSyncActionView> = [];
+	_results: Array<USyncActionView> = [];
 
 	@state()
 	_disabled: boolean = false;

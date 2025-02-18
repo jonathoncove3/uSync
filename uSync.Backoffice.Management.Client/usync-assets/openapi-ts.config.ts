@@ -1,23 +1,20 @@
-import { defineConfig } from '@hey-api/openapi-ts';
+import { defaultPlugins, defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-	client: 'legacy/fetch',
 	input: 'http://localhost:53015/umbraco/swagger/uSync/swagger.json',
 	output: {
 		format: 'prettier',
 		path: 'src/api',
 	},
 	plugins: [
+		...defaultPlugins,
+		'@hey-api/client-fetch',
 		{
-			name: '@hey-api/schemas',
-			type: 'json',
-		},
-		{
-			name: '@hey-api/types',
+			name: '@hey-api/typescript',
 			enums: 'javascript',
 		},
 		{
-			name: '@hey-api/services',
+			name: '@hey-api/sdk',
 			asClass: true,
 		},
 	],

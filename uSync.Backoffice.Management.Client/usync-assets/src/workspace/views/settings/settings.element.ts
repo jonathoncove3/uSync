@@ -8,8 +8,8 @@ import {
 } from '@umbraco-cms/backoffice/external/lit';
 import {
 	USYNC_CORE_CONTEXT_TOKEN,
-	uSyncHandlerSetSettings,
-	uSyncSettings,
+	USyncHandlerSetSettings,
+	USyncSettings,
 } from '@jumoo/uSync';
 
 export * from './components/usyncSettingItem.element.ts';
@@ -17,10 +17,10 @@ export * from './components/usyncSettingItem.element.ts';
 @customElement('usync-settings-view')
 export class uSyncSettingsViewElement extends UmbElementMixin(LitElement) {
 	@state()
-	settings?: uSyncSettings;
+	settings?: USyncSettings;
 
 	@state()
-	handlerSettings?: uSyncHandlerSetSettings;
+	handlerSettings?: USyncHandlerSetSettings;
 
 	constructor() {
 		super();

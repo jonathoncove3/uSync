@@ -10,12 +10,12 @@ import {
 	SyncActionGroup,
 	SyncHandlerSummary,
 	SyncLegacyCheckResponse,
-	uSyncActionView,
-	uSyncHandlerSetSettings,
-	uSyncSettings,
 	uSyncActionRepository,
 	uSyncConstants,
 	SyncPerformActionOptions,
+	USyncActionView,
+	USyncSettings,
+	USyncHandlerSetSettings,
 } from '@jumoo/uSync';
 import uSyncSignalRContext from '../signalr/signalr.context';
 import {
@@ -68,19 +68,19 @@ export class uSyncWorkspaceContext
 	/**
 	 * The results of a run.
 	 */
-	#results = new UmbArrayState<uSyncActionView>([], (x) => x.name);
+	#results = new UmbArrayState<USyncActionView>([], (x) => x.name);
 	public readonly results = this.#results.asObservable();
 
 	/**
 	 * Current settings for uSync
 	 */
-	#settings = new UmbObjectState<uSyncSettings | undefined>(undefined);
+	#settings = new UmbObjectState<USyncSettings | undefined>(undefined);
 	public readonly settings = this.#settings?.asObservable();
 
 	/**
 	 * Handler settings object
 	 */
-	#handlerSettings = new UmbObjectState<uSyncHandlerSetSettings | undefined>(undefined);
+	#handlerSettings = new UmbObjectState<USyncHandlerSetSettings | undefined>(undefined);
 	public readonly handlerSettings = this.#handlerSettings?.asObservable();
 
 	#legacy = new UmbObjectState<SyncLegacyCheckResponse | undefined>(undefined);
@@ -101,10 +101,10 @@ export class uSyncWorkspaceContext
 	 * Return the current actions from the repository
 	 */
 	async getActions() {
-		const { data } = await this.#repository.getActions();
+		const result = await this.#repository.getActions();
 
-		if (data) {
-			this.#actions.setValue(data);
+		if (result) {
+			this.#actions.setValue(result);
 		}
 	}
 
@@ -112,50 +112,46 @@ export class uSyncWorkspaceContext
 	 * Get the current uSync settings
 	 */
 	async getSettings() {
-		const { data } = await this.#repository.getSettings();
+		const result = await this.#repository.getSettings();
 
-		if (data) {
-			this.#settings.setValue(data);
+		if (result) {
+			this.#settings.setValue(result);
 		}
 
-		return data;
+		return result;
 	}
 
 	async getAddons() {
-		const { data } = await this.#repository.getAddons();
-		return data;
+		return await this.#repository.getAddons();
 	}
 
 	/**
 	 * Check to see if there is a legacy uSync folder on disk.
 	 */
 	async checkLegacy() {
-		const { data } = await this.#repository.checkLegacy();
-		if (data) {
-			this.#legacy.setValue(data);
+		const result = await this.#repository.checkLegacy();
+		if (result) {
+			this.#legacy.setValue(result);
 		}
 
-		return data;
+		return result;
 	}
 
 	async ignoreLegacy() {
-		const { data } = await this.#repository.ignoreLegacy();
-		return data ?? false;
+		return (await this.#repository.ignoreLegacy()) ?? false;
 	}
 
 	async copyLegacy() {
-		const { data } = await this.#repository.copyLegacy();
-		return data ?? false;
+		return (await this.#repository.copyLegacy()) ?? false;
 	}
 
 	/**
 	 * Get handler defaults.
 	 */
 	async getDefaultHandlerSetSettings() {
-		const { data } = await this.#repository.getHandlerSettings('Default');
-
-		if (data) {
-			this.#handlerSettings.setValue(data);
+		const result = await this.#repository.getHandlerSettings('Default');
+		if (result) {
+			this.#handlerSettings.setValue(result);
 		}
 	}
 
@@ -187,7 +183,7 @@ export class uSyncWorkspaceContext
 		}
 
 		do {
-			const { data } = await this.#repository.performAction({
+			const data = await this.#repository.performAction({
 				id: id,
 				action: options.action,
 				group: options.group.key,

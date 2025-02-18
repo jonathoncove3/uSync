@@ -44,14 +44,14 @@ export const EventMessageTypeModel = {
 
 export type HandlerSettings = {
     enabled: boolean;
-    actions: Array<(string)>;
+    actions: Array<string>;
     useFlatStructure: boolean;
     guidNames: boolean;
     failOnMissingParent: boolean;
     group: string;
     createClean: boolean;
     settings: {
-        [key: string]: (string);
+        [key: string]: string;
     };
 };
 
@@ -74,13 +74,14 @@ export type PerformActionRequest = {
     requestId: string;
     action: string;
     stepNumber: number;
-    options?: ((uSyncOptions) | null);
+    options?: USyncOptions | null;
+    username?: string | null;
 };
 
 export type PerformActionResponse = {
     requestId: string;
-    status?: Array<(SyncHandlerSummary)> | null;
-    actions?: Array<(uSyncActionView)> | null;
+    status?: Array<SyncHandlerSummary> | null;
+    actions?: Array<USyncActionView> | null;
     complete: boolean;
 };
 
@@ -92,14 +93,14 @@ export type SyncActionButton = {
     force: boolean;
     clean: boolean;
     file: boolean;
-    children: Array<(SyncActionButton)>;
+    children: Array<SyncActionButton>;
 };
 
 export type SyncActionGroup = {
     key: string;
     icon: string;
     groupName: string;
-    buttons: Array<(SyncActionButton)>;
+    buttons: Array<SyncActionButton>;
 };
 
 export type SyncHandlerSummary = {
@@ -112,37 +113,37 @@ export type SyncHandlerSummary = {
 
 export type SyncLegacyCheckResponse = {
     hasLegacy: boolean;
-    legacyFolder?: (string) | null;
-    legacyTypes: Array<(string)>;
+    legacyFolder?: string | null;
+    legacyTypes: Array<string>;
     latestFolder: string;
     latestVersion: string;
 };
 
 export type UploadImportResult = {
     success: boolean;
-    errors: Array<(string)>;
+    errors: Array<string>;
 };
 
-export type uSyncActionView = {
+export type USyncActionView = {
     key: string;
     name: string;
     handler: string;
     itemType: string;
     change: ChangeType;
     success: boolean;
-    details: Array<(uSyncChange)>;
-    message?: (string) | null;
+    details: Array<USyncChange>;
+    message?: string | null;
 };
 
-export type uSyncAddonInfo = {
+export type USyncAddonInfo = {
     version: string;
 };
 
-export type uSyncAddonSplash = {
-    [key: string]: unknown;
+export type USyncAddonSplash = {
+    [key: string]: never;
 };
 
-export type uSyncChange = {
+export type USyncChange = {
     success: boolean;
     name: string;
     path: string;
@@ -151,18 +152,18 @@ export type uSyncChange = {
     change: ChangeDetailType;
 };
 
-export type uSyncHandlerSetSettings = {
+export type USyncHandlerSetSettings = {
     enabled: boolean;
-    handlerGroups: Array<(string)>;
-    disabledHandlers: Array<(string)>;
-    handlerDefaults: (HandlerSettings);
+    handlerGroups: Array<string>;
+    disabledHandlers: Array<string>;
+    handlerDefaults: HandlerSettings;
     handlers: {
-        [key: string]: (HandlerSettings);
+        [key: string]: HandlerSettings;
     };
     isSelectable: boolean;
 };
 
-export type uSyncOptions = {
+export type USyncOptions = {
     clientId: string;
     force: boolean;
     clean: boolean;
@@ -171,13 +172,15 @@ export type uSyncOptions = {
     set: string;
 };
 
-export type uSyncSettings = {
+export type USyncSettings = {
     rootFolder: string;
-    folders: Array<(string)>;
+    folders: Array<string>;
     legacyFolder: string;
     isRootSite: boolean;
     lockRoot: boolean;
-    lockRootTypes: Array<(string)>;
+    stopFile: string;
+    onceFile: string;
+    lockRootTypes: Array<string>;
     defaultSet: string;
     importAtStartup: string;
     exportAtStartup: string;
@@ -191,7 +194,7 @@ export type uSyncSettings = {
     cacheFolderKeys: boolean;
     showVersionCheckWarning: boolean;
     customMappings: {
-        [key: string]: (string);
+        [key: string]: string;
     };
     enableHistory: boolean;
     defaultExtension: string;
@@ -205,40 +208,188 @@ export type uSyncSettings = {
     backgroundNotifications: boolean;
 };
 
-export type GetActionsResponse = (Array<(SyncActionGroup)>);
+export type GetActionsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/Actions';
+};
+
+export type GetActionsResponses = {
+    /**
+     * OK
+     */
+    200: Array<SyncActionGroup>;
+};
+
+export type GetActionsResponse = GetActionsResponses[keyof GetActionsResponses];
 
 export type DownloadData = {
-    requestId?: string;
+    body?: never;
+    path?: never;
+    query?: {
+        requestId?: string;
+    };
+    url: '/umbraco/usync/api/v1/Download';
 };
 
-export type DownloadResponse = (((Blob | File)));
+export type DownloadResponses = {
+    /**
+     * OK
+     */
+    200: Blob | File;
+};
+
+export type DownloadResponse = DownloadResponses[keyof DownloadResponses];
 
 export type PerformActionData = {
-    requestBody?: (PerformActionRequest);
+    body?: PerformActionRequest;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/Perform';
 };
 
-export type PerformActionResponse2 = ((PerformActionResponse));
+export type PerformActionResponses = {
+    /**
+     * OK
+     */
+    200: PerformActionResponse;
+};
+
+export type PerformActionResponse2 = PerformActionResponses[keyof PerformActionResponses];
 
 export type ProcessUploadData = {
-    tempKey?: string;
+    body?: never;
+    path?: never;
+    query?: {
+        tempKey?: string;
+    };
+    url: '/umbraco/usync/api/v1/ProcessUpload';
 };
 
-export type ProcessUploadResponse = ((UploadImportResult));
+export type ProcessUploadResponses = {
+    /**
+     * OK
+     */
+    200: UploadImportResult;
+};
 
-export type CheckLegacyResponse = ((SyncLegacyCheckResponse));
+export type ProcessUploadResponse = ProcessUploadResponses[keyof ProcessUploadResponses];
 
-export type CopyLegacyResponse = (boolean);
+export type CheckLegacyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/CheckLegacy';
+};
 
-export type IgnoreLegacyResponse = (boolean);
+export type CheckLegacyResponses = {
+    /**
+     * OK
+     */
+    200: SyncLegacyCheckResponse;
+};
 
-export type GetAddOnsResponse = ((uSyncAddonInfo));
+export type CheckLegacyResponse = CheckLegacyResponses[keyof CheckLegacyResponses];
 
-export type GetAddonSplashResponse = ((uSyncAddonSplash));
+export type CopyLegacyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/CopyLegacy';
+};
+
+export type CopyLegacyResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type CopyLegacyResponse = CopyLegacyResponses[keyof CopyLegacyResponses];
+
+export type IgnoreLegacyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/IgnoreLegacy';
+};
+
+export type IgnoreLegacyResponses = {
+    /**
+     * OK
+     */
+    200: boolean;
+};
+
+export type IgnoreLegacyResponse = IgnoreLegacyResponses[keyof IgnoreLegacyResponses];
+
+export type GetAddOnsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/AddOns';
+};
+
+export type GetAddOnsResponses = {
+    /**
+     * OK
+     */
+    200: USyncAddonInfo;
+};
+
+export type GetAddOnsResponse = GetAddOnsResponses[keyof GetAddOnsResponses];
+
+export type GetAddonSplashData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/AddOnSplash';
+};
+
+export type GetAddonSplashResponses = {
+    /**
+     * OK
+     */
+    200: USyncAddonSplash;
+};
+
+export type GetAddonSplashResponse = GetAddonSplashResponses[keyof GetAddonSplashResponses];
 
 export type GetHandlerSetSettingsData = {
-    id?: string;
+    body?: never;
+    path?: never;
+    query?: {
+        id?: string;
+    };
+    url: '/umbraco/usync/api/v1/HandlerSettings';
 };
 
-export type GetHandlerSetSettingsResponse = ((uSyncHandlerSetSettings));
+export type GetHandlerSetSettingsResponses = {
+    /**
+     * OK
+     */
+    200: USyncHandlerSetSettings;
+};
 
-export type GetSettingsResponse = ((uSyncSettings));
+export type GetHandlerSetSettingsResponse = GetHandlerSetSettingsResponses[keyof GetHandlerSetSettingsResponses];
+
+export type GetSettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/usync/api/v1/Settings';
+};
+
+export type GetSettingsResponses = {
+    /**
+     * OK
+     */
+    200: USyncSettings;
+};
+
+export type GetSettingsResponse = GetSettingsResponses[keyof GetSettingsResponses];
+
+export type ClientOptions = {
+    baseUrl: 'http://localhost:53015' | (string & {});
+};

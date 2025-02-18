@@ -6,7 +6,7 @@ import {
 	html,
 	property,
 } from '@umbraco-cms/backoffice/external/lit';
-import { ChangeType, uSyncActionView } from '@jumoo/uSync';
+import { ChangeType, USyncActionView } from '@jumoo/uSync';
 import * as Diff from 'diff';
 
 /**
@@ -15,7 +15,7 @@ import * as Diff from 'diff';
 @customElement('usync-change-view')
 export class uSyncChangeView extends UmbElementMixin(LitElement) {
 	@property({ type: Object })
-	item?: uSyncActionView;
+	item?: USyncActionView;
 
 	render() {
 		if (this.item?.change == ChangeType.CREATE) {

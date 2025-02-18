@@ -66,7 +66,7 @@ export class uSyncActionRepository extends UmbControllerBase {
 	 * @returns PerformActionResponse.
 	 */
 	async performAction(request: SyncPerformRequest) {
-		return this.#actionDataSource.performAction({
+		return await this.#actionDataSource.performAction({
 			requestId: request.id,
 			action: request.action,
 			options: {
@@ -90,7 +90,7 @@ export class uSyncActionRepository extends UmbControllerBase {
 	}
 
 	async getAddons() {
-		return await this.#settingsDataSource.getAddons();
+		return (await this.#settingsDataSource.getAddons()).data?.data;
 	}
 
 	/**
@@ -127,10 +127,10 @@ export class uSyncActionRepository extends UmbControllerBase {
 	}
 
 	async downloadFile(requestId: string) {
-		return (await this.#actionDataSource.downloadFile(requestId)).data;
+		return await this.#actionDataSource.downloadFile(requestId);
 	}
 
 	async processUpload(fileId: string) {
-		return (await this.#actionDataSource.processUpload(fileId)).data;
+		return await this.#actionDataSource.processUpload(fileId);
 	}
 }

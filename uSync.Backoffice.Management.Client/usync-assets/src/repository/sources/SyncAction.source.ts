@@ -1,57 +1,53 @@
 import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbDataSourceResponse } from '@umbraco-cms/backoffice/repository';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
-import {
-	ActionsService,
-	PerformActionRequest,
-	PerformActionResponse,
-	SyncActionGroup,
-} from '@jumoo/uSync';
+import { ActionsService, PerformActionRequest } from '@jumoo/uSync';
 
-export interface SyncActionDataSource {
-	getActions(): Promise<UmbDataSourceResponse<unknown>>;
-	performAction(
-		request: PerformActionRequest,
-	): Promise<UmbDataSourceResponse<PerformActionResponse>>;
-}
-
-export class uSyncActionDataSource implements SyncActionDataSource {
+export class uSyncActionDataSource {
 	#host: UmbControllerHost;
 
 	constructor(host: UmbControllerHost) {
 		this.#host = host;
 	}
 
-	async getActions(): Promise<UmbDataSourceResponse<Array<SyncActionGroup>>> {
-		return await tryExecuteAndNotify(this.#host, ActionsService.getActions());
+	async getActions() {
+		return (await tryExecuteAndNotify(this.#host, ActionsService.getActions())).data
+			?.data;
 	}
 
-	async performAction(
-		request: PerformActionRequest,
-	): Promise<UmbDataSourceResponse<PerformActionResponse>> {
-		return await tryExecuteAndNotify(
-			this.#host,
-			ActionsService.performAction({
-				requestBody: request,
-			}),
-		);
+	async performAction(request: PerformActionRequest) {
+		return (
+			await tryExecuteAndNotify(
+				this.#host,
+				ActionsService.performAction({
+					body: request,
+				}),
+			)
+		).data?.data;
 	}
 
 	async downloadFile(requestId: string) {
-		return await tryExecuteAndNotify(
-			this.#host,
-			ActionsService.download({
-				requestId: requestId,
-			}),
-		);
+		return (
+			await tryExecuteAndNotify(
+				this.#host,
+				ActionsService.download({
+					query: {
+						requestId: requestId,
+					},
+				}),
+			)
+		).data?.data;
 	}
 
 	async processUpload(fileId: string) {
-		return await tryExecuteAndNotify(
-			this.#host,
-			ActionsService.processUpload({
-				tempKey: fileId,
-			}),
-		);
+		return (
+			await tryExecuteAndNotify(
+				this.#host,
+				ActionsService.processUpload({
+					query: {
+						tempKey: fileId,
+					},
+				}),
+			)
+		).data?.data;
 	}
 }
